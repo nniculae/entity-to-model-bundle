@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="modelDir">%kernel.project_dir%/model</parameter>
+    </parameters>
+    <services>
+         <service id="Aristonet\EntityToModelBundle\Command\Convertor">
+            <argument type="service" id="Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface" />
+        </service>
+        <service id="Aristonet\EntityToModelBundle\Command\ModelWriter">
+            <argument type="service" id="Aristonet\EntityToModelBundle\Command\Convertor" />
+            <argument>%modelDir%</argument>
+            <argument type="service" id="Symfony\Component\Filesystem\Filesystem" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+        </service>
+        <service id="Aristonet\EntityToModelBundle\Command\ConvertEntityToModelCommand">
+            <argument type="service" id="Aristonet\EntityToModelBundle\Command\ModelWriter" />
+            <tag name="console.command" command="convert:entitytomodel"/>
+        </service>
+    </services>
+</container>
+
