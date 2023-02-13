@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Aristonet EntityToModelBundle package.
  *
- * c) Niculae Niculae
+ * @author Niculae Niculae
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -21,7 +21,7 @@ use Symfony\Component\Finder\Finder;
 
 class ConvertEntityToModelCommandTest extends KernelTestCase
 {
-    public function testExecuteWithDefaultOptions()
+    public function testExecuteWithDefaultOptions(): void
     {
         $kernel = self::bootKernel([
             'environment' => 'test',
@@ -58,7 +58,7 @@ class ConvertEntityToModelCommandTest extends KernelTestCase
         $this->assertStringContainsString('model', $output);
     }
 
-    public function testExecuteWithOptionClassName()
+    public function testExecuteWithOptionClassName(): void
     {
         $kernel = self::bootKernel([
             'environment' => 'test',

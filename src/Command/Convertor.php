@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Aristonet EntityToModelBundle package.
  *
- * c) Niculae Niculae
+ * @author Niculae Niculae
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Aristonet\EntityToModelBundle\Command;
 
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
+use Symfony\Component\PropertyInfo\Type;
 
 class Convertor implements ConvertorInterface
 {
@@ -30,10 +31,12 @@ class Convertor implements ConvertorInterface
 
         $interfaceDefinition = 'export class '.ClassHelper::getShortClassName($fullClassName).'{'.\PHP_EOL;
         $typescriptProp = '';
+        $properties = $this->propertyInfoExtractor->getProperties($fullClassName);
+        if (null === $properties) {
+            return '';
+        }
 
-        $isNullable = false;
-
-        foreach ($this->propertyInfoExtractor->getProperties($fullClassName) as $prop) {
+        foreach ($properties as $prop) {
             /** @var Type[] $types */
             $types = $this->propertyInfoExtractor->getTypes($fullClassName, $prop);
 
@@ -41,21 +44,27 @@ class Convertor implements ConvertorInterface
                 $type = $types[0];
                 $nullableOp = $type->isNullable() ? '?' : '';
 
-                if (null === $type->getClassName()) {
+                $className = $type->getClassName();
+
+                if (null === $className) {
                     $typeTs = TypeMapping::PhpTs[$type->getBuiltinType()] ?? 'any';
                     $typescriptProp .= sprintf("\tpublic %s%s: %s;%s", $prop, $nullableOp, $typeTs, \PHP_EOL);
                 } elseif (false === $type->isCollection()) {
-                    $typeTs = TypeMapping::PhpTs[$type->getClassName()] ?? null;
+                    $typeTs = TypeMapping::PhpTs[$className] ?? null;
                     if (null === $typeTs) {
-                        $typeTs = ClassHelper::getShortClassName($type->getClassName());
+                        $typeTs = ClassHelper::getShortClassName($className);
                         $this->handleImports($typeTs);
                     }
 
                     $typescriptProp .= sprintf("\tpublic %s%s: %s;%s", $prop, $nullableOp, $typeTs, \PHP_EOL);
                 } else {
-                    /** @var Type[] $collectionTypes */
                     $collectionValueType = $type->getCollectionValueTypes()[0];
-                    $typeTs = ClassHelper::getShortClassName($collectionValueType->getClassName());
+
+                    $className = $collectionValueType->getClassName();
+                    if (null === $className) {
+                        continue;
+                    }
+                    $typeTs = ClassHelper::getShortClassName($className);
                     $this->handleImports($typeTs);
 
                     $typescriptProp .= sprintf("\tpublic %s%s: %s[];%s", $prop, $nullableOp, $typeTs, \PHP_EOL);

@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Aristonet EntityToModelBundle package.
  *
- * c) Niculae Niculae
+ * @author Niculae Niculae
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -22,7 +22,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'convert:entitytomodel',
-    description: 'Add a short description for your command',
+    description: 'It converts doctrine entities to typescript models',
 )]
 class ConvertEntityToModelCommand extends Command
 {
@@ -45,9 +45,9 @@ class ConvertEntityToModelCommand extends Command
 
         try {
             if (null === $input->getOption('className')) {
-                $path = $this->modelWriter->writeAllModels($input->getOption('modelDir'));
+                $path = $this->modelWriter->writeAllModels((string) $input->getOption('modelDir'));
             } else {
-                $path = $this->modelWriter->writeSingleModel(trim($input->getOption('className')), $input->getOption('modelDir'));
+                $path = $this->modelWriter->writeSingleModel(trim((string) $input->getOption('className')), (string) $input->getOption('modelDir'));
             }
         } catch (\Exception $exc) {
             $io->error($exc->getMessage());

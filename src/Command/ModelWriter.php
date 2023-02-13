@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Aristonet EntityToModelBundle package.
  *
- * c) Niculae Niculae
+ * @author Niculae Niculae
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -19,15 +19,19 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ModelWriter
 {
+    /**
+     * @var array<int, class-string>
+     */
     private array $entitiesClassNames;
 
     public function __construct(
         private readonly ConvertorInterface $convertor,
         private readonly string $modelDir,
         private readonly Filesystem $filesystem,
-        private readonly EntityManagerInterface $entityManager,
+        readonly EntityManagerInterface $entityManager,
     ) {
-        $this->entitiesClassNames = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
+        $metaDriverDataImpl = $entityManager->getConfiguration()->getMetadataDriverImpl();
+        $this->entitiesClassNames = null === $metaDriverDataImpl ? [] : $metaDriverDataImpl->getAllClassNames();
     }
 
     public function writeAllModels(string $modelDirectory = null): string
@@ -45,7 +49,7 @@ class ModelWriter
         return $modelDir;
     }
 
-    public function writeSingleModel(string $classShortName, string $modelDirectory = null): void
+    public function writeSingleModel(string $classShortName, string $modelDirectory = null): string
     {
         $this->ensureEntitiesExists();
         $this->ensureDirExists();
@@ -60,9 +64,11 @@ class ModelWriter
 
         $fileFullPath = $modelDir.'/'.mb_strtolower($classShortName).'.ts';
         $this->filesystem->dumpFile($fileFullPath, $this->convertor->convert($fullClassName));
+
+        return $modelDir;
     }
 
-    private function ensureDirExists()
+    private function ensureDirExists(): void
     {
         if (!$this->filesystem->exists($this->modelDir)) {
             $this->filesystem->mkdir($this->modelDir);
@@ -86,7 +92,7 @@ class ModelWriter
         }
     }
 
-    private function ensureEntitiesExists()
+    private function ensureEntitiesExists(): void
     {
         if (\count($this->entitiesClassNames) <= 0) {
             throw new FileNotFoundException('No entities found in this project');

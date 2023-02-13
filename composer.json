@@ -39,6 +39,10 @@
   },
   "require-dev": {
     "symfony/test-pack": "^1.1",
-    "symfony/finder": "6.3.x-dev"
+    "symfony/finder": "6.3.x-dev",
+    "vimeo/psalm": " ^4.12",
+    "phpstan/phpstan": "1.10.x-dev",
+    "psalm/plugin-phpunit": "dev-master",
+    "psalm/plugin-symfony": "dev-master"
   }
 }

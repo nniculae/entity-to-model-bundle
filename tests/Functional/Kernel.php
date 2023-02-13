@@ -5,7 +5,7 @@ declare(strict_types=1);
 /*
  * This file is part of the Aristonet EntityToModelBundle package.
  *
- * c) Niculae Niculae
+ * @author Niculae Niculae
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -26,9 +26,7 @@ class Kernel extends BaseKernel
     use MicroKernelTrait;
 
     /**
-     * Returns an array of bundles to register.
-     *
-     * @return iterable<mixed, BundleInterface>
+     * {@inheritDoc}
      */
     public function registerBundles(): iterable
     {
