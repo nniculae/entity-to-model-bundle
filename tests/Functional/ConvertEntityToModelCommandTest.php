@@ -21,7 +21,7 @@ use Symfony\Component\Finder\Finder;
 
 class ConvertEntityToModelCommandTest extends KernelTestCase
 {
-    public function testExecuteWithDefaultOptions(): void
+    public function testExecuteShouldWriteAllModels(): void
     {
         $kernel = self::bootKernel([
             'environment' => 'test',
@@ -44,10 +44,10 @@ class ConvertEntityToModelCommandTest extends KernelTestCase
         $finderFixtures->files()->in($fixturesDir)->sortByName();
         $fixtures = iterator_to_array($finderGeneratedFiles, false);
 
-        $this->assertSame(\count($generatedFiles), \count($fixtures));
+        self::assertSame(\count($generatedFiles), \count($fixtures));
 
         for ($i = 0; $i < \count($generatedFiles); ++$i) {
-            $this->assertSame($generatedFiles[$i]->getContents(), $fixtures[$i]->getContents());
+            self::assertSame($generatedFiles[$i]->getContents(), $fixtures[$i]->getContents());
         }
 
         $fileSystem = new Filesystem();
@@ -55,10 +55,10 @@ class ConvertEntityToModelCommandTest extends KernelTestCase
 
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('model', $output);
+        self::assertStringContainsString('model', $output);
     }
 
-    public function testExecuteWithOptionClassName(): void
+    public function testExecuteShouldWriteSingleModel(): void
     {
         $kernel = self::bootKernel([
             'environment' => 'test',
@@ -76,14 +76,14 @@ class ConvertEntityToModelCommandTest extends KernelTestCase
         $orderModel = $kernel->getProjectDir().'/model/order.ts';
         $orderFixture = $kernel->getProjectDir().'/tests/model/order.ts';
 
-        $this->assertSame(file_get_contents($orderModel), file_get_contents($orderFixture));
+        self::assertSame(file_get_contents($orderModel), file_get_contents($orderFixture));
 
         $fileSystem = new Filesystem();
         $fileSystem->remove($kernel->getProjectDir().'/model');
 
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('model', $output);
+        self::assertStringContainsString('model', $output);
     }
 
     protected static function getKernelClass(): string

@@ -27,7 +27,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ConvertEntityToModelCommand extends Command
 {
     public function __construct(
-        private readonly ModelWriter $modelWriter,
+        private readonly ModelWriterInterface $modelWriter,
     ) {
         parent::__construct();
     }

@@ -10,14 +10,16 @@
          <service id="Aristonet\EntityToModelBundle\Command\Convertor">
             <argument type="service" id="Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface" />
         </service>
+        <service id="Aristonet\EntityToModelBundle\Command\ConvertorInterface" alias="Aristonet\EntityToModelBundle\Command\Convertor"/>
         <service id="Aristonet\EntityToModelBundle\Command\ModelWriter">
-            <argument type="service" id="Aristonet\EntityToModelBundle\Command\Convertor" />
+            <argument type="service" id="Aristonet\EntityToModelBundle\Command\ConvertorInterface" />
             <argument>%modelDir%</argument>
             <argument type="service" id="Symfony\Component\Filesystem\Filesystem" />
             <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
         </service>
+        <service id="Aristonet\EntityToModelBundle\Command\ModelWriterInterface" alias="Aristonet\EntityToModelBundle\Command\ModelWriter"/>
         <service id="Aristonet\EntityToModelBundle\Command\ConvertEntityToModelCommand">
-            <argument type="service" id="Aristonet\EntityToModelBundle\Command\ModelWriter" />
+            <argument type="service" id="Aristonet\EntityToModelBundle\Command\ModelWriterInterface" />
             <tag name="console.command" command="convert:entitytomodel"/>
         </service>
     </services>

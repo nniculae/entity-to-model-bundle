@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace Aristonet\EntityToModelBundle\Command;
 
+use Aristonet\EntityToModelBundle\Exception\NoEntitiesFoundException;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ModelWriter
+class ModelWriter implements ModelWriterInterface
 {
     /**
      * @var array<int, class-string>
@@ -59,7 +59,7 @@ class ModelWriter
         $namespace = ClassHelper::getNamespace($this->entitiesClassNames[0]);
         $fullClassName = $namespace.'\\'.$classShortName;
         if (!\in_array($fullClassName, $this->entitiesClassNames)) {
-            throw new FileNotFoundException(sprintf('The entity %s was not found.', $fullClassName));
+            throw new \InvalidArgumentException(sprintf('The entity %s was not found.', $fullClassName));
         }
 
         $fileFullPath = $modelDir.'/'.mb_strtolower($classShortName).'.ts';
@@ -80,7 +80,7 @@ class ModelWriter
         if (null != $modelDirectory) {
             $modelDir = $modelDirectory;
             if (!$this->filesystem->exists($modelDir)) {
-                throw new FileNotFoundException(sprintf('Directory %s was not found', $modelDir));
+                throw new \InvalidArgumentException(sprintf('Directory %s was not found', $modelDir));
             }
 
             return $modelDir;
@@ -95,7 +95,7 @@ class ModelWriter
     private function ensureEntitiesExists(): void
     {
         if (\count($this->entitiesClassNames) <= 0) {
-            throw new FileNotFoundException('No entities found in this project');
+            throw new NoEntitiesFoundException('No entities found in this project');
         }
     }
 }
