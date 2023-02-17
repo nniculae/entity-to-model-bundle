@@ -29,7 +29,7 @@ class Convertor implements ConvertorInterface
     {
         $this->imports = '';
 
-        $interfaceDefinition = 'export class '.ClassHelper::getShortClassName($fullClassName).'{'.\PHP_EOL;
+        $interfaceDefinition = 'export class ' . ClassHelper::getShortClassName($fullClassName) . '{' . \PHP_EOL;
         $typescriptProp = '';
         $properties = $this->propertyInfoExtractor->getProperties($fullClassName);
         if (null === $properties) {
@@ -38,7 +38,7 @@ class Convertor implements ConvertorInterface
 
         foreach ($properties as $prop) {
             /** @var Type[] $types */
-            $types = $this->propertyInfoExtractor->getTypes($fullClassName, $prop);
+            $types = $this->propertyInfoExtractor->getTypes($fullClassName, $prop) ?: [];
 
             if (\count($types) > 0) {
                 $type = $types[0];
